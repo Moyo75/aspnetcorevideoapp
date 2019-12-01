@@ -1,15 +1,25 @@
-﻿using System;
+﻿using AspNetCoreVideo.Models;
+using AspNetCoreVideo.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AspNetCoreVideo.Controllers
 {
-    public class HomeController
+    public class HomeController : Controller
     {
-        public string Index()
+        private IVideoData _videos;
+
+        public HomeController(IVideoData videos)
         {
-            return "Hello, from controller";
+            _videos = videos;
+        }
+        public ViewResult Index()
+        {
+            var model = _videos.GetAll();
+            return View(model);
         }
     }
 }
