@@ -1,18 +1,13 @@
-﻿@model IEnumerable<AspNetCoreVideo.ViewModels.VideoViewModel>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title>Video</title>
-</head>
-<body>
-    <table>
-        @foreach (var video in Model)
-        {
-        <tr>
-            <td>@Html.ActionLink(video.Id.ToString(), "Details", new { id = video.Id })</td>
-            <td>@video.Title</td>
-            <td>@video.Genre</td>
-        </tr>
-        }
-    </table>
-</body>
-</html>
+﻿@model IEnumerable<VideoViewModel>
+@{
+    ViewBag.Title = "Home";
+}
+    @foreach (var video in Model)
+    {
+        @Html.Partial("_Video", video);
+    }
+
+<div style="margin-left:10px;margin-bottom:10px;">
+    <a class="btn btn-success" asp-action="Create">Create</a>
+</div>
+

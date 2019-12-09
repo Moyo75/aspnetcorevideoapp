@@ -4,10 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreVideo.Data;
+using AspNetCoreVideo.Entities;
 using AspNetCoreVideo.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +37,9 @@ namespace AspNetCoreVideo
             var conn = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<VideoDbContext>(options => options.UseSqlServer(conn));
 
+            services.AddIdentity<User, IdentityRole>(options => { 
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/";
+            }).AddEntityFrameworkStores<VideoDbContext>();
             services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddSingleton(provider => Configuration);
             services.AddSingleton<IMessageService, ConfigurationMessageService>();
@@ -49,8 +54,8 @@ namespace AspNetCoreVideo
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseStaticFiles();
-
+            app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseMvc(routes => {
                 routes.MapRoute(
                     name: "default",

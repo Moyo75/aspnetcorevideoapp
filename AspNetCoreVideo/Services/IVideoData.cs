@@ -8,8 +8,9 @@ namespace AspNetCoreVideo.Services
 {
     public interface IVideoData
     {
-        public IEnumerable<Video> GetAll();
-        public Video Get(int id);
-        public void Add(Video newVideo);
+        IEnumerable<Video> GetAll();
+        Video Get(int id);
+        void Add(Video newVideo);
+        int Commit();
     }
 }

@@ -2,12 +2,14 @@
 using AspNetCoreVideo.Models;
 using AspNetCoreVideo.Services;
 using AspNetCoreVideo.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 
 namespace AspNetCoreVideo.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private IVideoData _videos;
@@ -16,6 +18,8 @@ namespace AspNetCoreVideo.Controllers
         {
             _videos = videos;
         }
+
+        [AllowAnonymous]
         public ViewResult Index()
         {
             var model = _videos.GetAll().Select(video =>
@@ -45,6 +49,27 @@ namespace AspNetCoreVideo.Controllers
         }
 
         [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var video = _videos.Get(id);
+            return View(video);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, VideoEditViewModel model)
+        {
+            var video = _videos.Get(id);
+            if(video == null || !ModelState.IsValid) return View(model);
+            
+            video.Title = model.Title;
+            video.Genre = model.Genre;
+
+            _videos.Commit();
+
+            return RedirectToAction("Details", new { id = video.Id });
+        }
+
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -61,6 +86,7 @@ namespace AspNetCoreVideo.Controllers
                     Genre = model.Genre
                 };
                 _videos.Add(video);
+                _videos.Commit();
                 return RedirectToAction("Details", new { id = video.Id });
             }
 
